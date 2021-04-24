@@ -3,7 +3,7 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import firebase from "firebase/app";
 import 'firebase/auth'
-
+import 'firebase/firestore'
 
 
 const newUser = {
@@ -19,13 +19,22 @@ const newUser = {
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
       // Signed in
-      var user = userCredential.user;
-      //console.log(user);
+      const  user = userCredential.user;
+      console.log(user);
+      
+       
+        firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid)
+        .set({
+          email: user.email
+        })
+      
+      
+      
       //window.localStorage.setItem('user', JSON.stringify(user))
     })
     .catch((error) => {
-      var errorCode = error.code;
-      var errorMessage = error.message;
+      const  errorCode = error.code;
+      const errorMessage = error.message;
       seterror(errorMessage);
     });
 
