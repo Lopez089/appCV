@@ -1,84 +1,61 @@
-import {useState} from 'react'
+import ContainerFormAuth from '../components/ContainerFormAuth/containerFormAuth'
+import { Form, Button } from 'react-bootstrap'
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
-import firebase from "firebase/app";
-import 'firebase/auth'
-import 'firebase/firestore'
+import LayoutAuth from '../components/layout/layoutAuth'
+import Layout from '../components/layout/layout'
+import Link from 'next/link'
+import useFildInput from '../hooks/useFildInut'
+import useSignUp from '../hooks/useSignUp'
 
-
-const newUser = {
-  email: 'juan@juansdfs.com',
-  password:'12345633323'
-}
-
-
-
-  const handleSubmit = (e, email, password, seterror)=>{
-    e.preventDefault();
-
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      // Signed in
-      const  user = userCredential.user;
-      console.log(user);
-      
-       
-        firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid)
-        .set({
-          email: user.email
-        })
-      
-      
-      
-      //window.localStorage.setItem('user', JSON.stringify(user))
-    })
-    .catch((error) => {
-      const  errorCode = error.code;
-      const errorMessage = error.message;
-      seterror(errorMessage);
-    });
-
-  }
-    
-
-const Singin = ()=> {
-  const [email, setemail] = useState('');
-  const [password, setpasword] = useState('');
-  const [error, seterror] = useState(null);
+const Singin = () => {
+  const { fields, handleOnchage } = useFildInput()
+  const { firstName, lastName, email, password } = fields
+  const { error, signUp } = useSignUp({ firstName, lastName, email, password })
 
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Login</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <Layout>
+      <LayoutAuth>
+        <div>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Registration
-        </h1>
-        {
-          error ?
-           ( <p>{error}</p>) :null
-        }
-        <div className={styles.grid}>
-          <form>
-            <div>
-              <input type="text" placeholder="email" onChange={(e)=> setemail(e.target.value)}/>
-            </div>
-            <div>
-              <input type="text" placeholder="pasword" onChange={(e)=> setpasword(e.target.value)} />
-            </div>
-            <button onClick={(e)=> handleSubmit(e,email, password, seterror)}>Login</button>
-          </form>
+          <Head>
+            <title>Sign up</title>
+            <link rel='icon' href='/favicon.ico' />
+          </Head>
+
+          <main className='w-100 d-flex flex-column align-items-center justify-content-center'>
+
+            <ContainerFormAuth error={error} text='Sign up'>
+              <Form>
+                <Form.Group controlId='firstName'>
+                  <Form.Label>First name</Form.Label>
+                  <Form.Control type='text' placeholder='first name' onChange={(e) => handleOnchage(e)} />
+                </Form.Group>
+                <Form.Group controlId='lastName'>
+                  <Form.Label>Last name</Form.Label>
+                  <Form.Control type='text' placeholder='last name' onChange={(e) => handleOnchage(e)} />
+                </Form.Group>
+                <Form.Group controlId='email'>
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control type='email' placeholder='email' onChange={(e) => handleOnchage(e)} />
+                </Form.Group>
+                <Form.Group controlId='password'>
+                  <Form.Label>Password</Form.Label>
+                  <Form.Control type='password' placeholder='pasword' onChange={(e) => handleOnchage(e)} />
+                </Form.Group>
+                <Button type='submit' block onClick={(e) => signUp(e)}>Sign up</Button>
+              </Form>
+              <div className='mt-3'>
+                <p className='text-muted text-center'>¿Ya tienes una cuenta? <Link href='/login'>Login</Link></p>
+              </div>
+            </ContainerFormAuth>
+
+          </main>
         </div>
-      </main>
-
-    
-    </div>
+      </LayoutAuth>
+    </Layout>
   )
 }
 
 export default Singin
 
-//https://firebase.google.com/docs/auth/web/password-auth
+// https://firebase.google.com/docs/auth/web/password-auth
