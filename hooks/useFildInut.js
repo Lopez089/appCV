@@ -4,12 +4,21 @@ const useFildInput = () => {
   const [fields, setFields] = useState({ email: '', password: '' })
 
   const handleOnchage = (e) => {
-    setFields({
-      ...fields,
-      [e.target.id]: e.target.value
-    })
-  }
+    const parent = e.target.parentElement.parentElement.id
+    const parentParent = e.target.parentElement.parentElement.parentElement.parentElement.id
+    const idForm = parent === '' ? parentParent : parent
 
+    const newState = {
+      ...fields,
+      [idForm]: {
+        ...fields[idForm],
+        [e.target.id]: e.target.value
+      }
+    }
+
+    setFields(newState)
+  }
+  // console.log(fields)
   return { fields, handleOnchage }
 }
 

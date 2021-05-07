@@ -6,47 +6,49 @@ import 'firebase/firestore'
 import firebase from 'firebase/app'
 import Layout from '../components/layout/layout'
 import { Button, Col, Row, Container, Form } from 'react-bootstrap'
+import useFildInput from '../hooks/useFildInut'
 
-const FormEducation = ({ sectionEducation }) => {
-  console.log({ sectionEducation })
+const FormEducation = ({ sectionEducation, handleOnchage }) => {
+  // console.log({ sectionEducation })
   return (
     sectionEducation.map((education) => {
       return (
-        <Form key='education'>
-          <section>
+
+        <section key={education}>
+          <Form id='titulation'>
             <Form.Group controlId='Titulacion'>
               <Form.Label>Titulacion</Form.Label>
-              <Form.Control placeholder='titulacion' type='text' />
+              <Form.Control onChange={(e) => handleOnchage(e)} placeholder='titulacion' type='text' />
             </Form.Group>
             <Form.Group controlId='Universidad'>
               <Form.Label>Universidad</Form.Label>
-              <Form.Control placeholder='Universidad' type='text' />
+              <Form.Control onChange={(e) => handleOnchage(e)} placeholder='Universidad' type='text' />
             </Form.Group>
             <Row className='d-flex'>
               <Col>
                 <Form.Group controlId='AñoInicial'>
                   <Form.Label>Año de inicio</Form.Label>
-                  <Form.Control placeholder='año de inicio' type='number' />
+                  <Form.Control onChange={(e) => handleOnchage(e)} placeholder='año de inicio' type='number' />
                 </Form.Group>
               </Col>
               <Col>
                 <Form.Group controlId='AñoFinal'>
                   <Form.Label>Año Finalizacion</Form.Label>
-                  <Form.Control placeholder='Año finalizacion' type='number' />
+                  <Form.Control onChange={(e) => handleOnchage(e)} placeholder='Año finalizacion' type='number' />
                 </Form.Group>
               </Col>
 
             </Row>
-          </section>
-          <hr className='w-75 my-5' />
+            <hr className='w-75 my-5' />
+          </Form>
 
-        </Form>
+        </section>
+
       )
     }))
 }
 
 const CardDashboard = ({ children, text, plus, handleplus, state }) => {
-  console.log({ state })
   let newState
   if (state) {
     newState = state.concat([state.length + 1])
@@ -74,9 +76,10 @@ const CardDashboard = ({ children, text, plus, handleplus, state }) => {
 
 const Home = () => {
   const router = useRouter()
+  const { fields, handleOnchage } = useFildInput()
   const [user, setUser] = useState(false)
-  const [sectionEducation, setsectionEducation] = useState(['1', '2'])
-  console.log({ sectionEducation })
+  const [sectionEducation, setsectionEducation] = useState(['1'])
+  // console.log({ fields })
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
@@ -92,11 +95,10 @@ const Home = () => {
     e.preventDefault()
 
     const uid = firebase.auth().currentUser.uid
-
-    console.log(user)
+    console.log(uid)
     firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid)
       .set({
-        input: input
+        data: fields
       }, { merge: true })
   }
 
@@ -116,108 +118,105 @@ const Home = () => {
                 <h3 className='my-5'><spank className='text-muted'>Welcome</spank> Juan!</h3>
 
                 <CardDashboard text='Data User'>
-                  <Form>
+                  <Form id='DataUser'>
                     <Form.Group controlId='name'>
                       <Form.Label>Name</Form.Label>
-                      <Form.Control placeholder='Name' type='text' />
+                      <Form.Control onChange={(e) => handleOnchage(e)} placeholder='Name' type='text' />
                     </Form.Group>
                     <Form.Group controlId='rol'>
                       <Form.Label>Rol</Form.Label>
-                      <Form.Control placeholder='Rol' type='text' />
+                      <Form.Control onChange={(e) => handleOnchage(e)} placeholder='Rol' type='text' />
                     </Form.Group>
-                    <Form.Group controlId='descrption'>
+                    <Form.Group controlId='descrptionUser'>
                       <Form.Label>About me</Form.Label>
-                      <Form.Control placeholder='About me' as='textarea' rows={8} />
+                      <Form.Control onChange={(e) => handleOnchage(e)} placeholder='About me' as='textarea' rows={8} />
                     </Form.Group>
                   </Form>
                 </CardDashboard>
 
                 <CardDashboard text='Contacto'>
-                  <Form>
+                  <Form id='contacto'>
                     <Form.Group controlId='NumberPhone'>
                       <Form.Label for='phone'>Number Phone</Form.Label>
-                      <Form.Control placeholder='Number Phone' type='tel' />
+                      <Form.Control onChange={(e) => handleOnchage(e)} placeholder='Number Phone' type='tel' />
                     </Form.Group>
                     <Form.Group controlId='Web'>
                       <Form.Label>Site Web</Form.Label>
-                      <Form.Control placeholder='Site Web' type='url' />
+                      <Form.Control onChange={(e) => handleOnchage(e)} placeholder='Site Web' type='url' />
                     </Form.Group>
                     <Form.Group controlId='Addres Email'>
                       <Form.Label>Addres Email</Form.Label>
-                      <Form.Control placeholder='Addres Email' type='emil' />
+                      <Form.Control onChange={(e) => handleOnchage(e)} placeholder='Addres Email' type='emil' />
                     </Form.Group>
                     <Form.Group controlId='Linkedin'>
                       <Form.Label>Linkedin</Form.Label>
-                      <Form.Control placeholder='Linkedin' type='url' />
+                      <Form.Control onChange={(e) => handleOnchage(e)} placeholder='Linkedin' type='url' />
                     </Form.Group>
                     <Form.Group controlId='Github'>
                       <Form.Label>Github</Form.Label>
-                      <Form.Control placeholder='Github' type='url' />
+                      <Form.Control onChange={(e) => handleOnchage(e)} placeholder='Github' type='url' />
                     </Form.Group>
                   </Form>
                 </CardDashboard>
 
                 <CardDashboard text='Education' plus handleplus={setsectionEducation} state={sectionEducation}>
-                  <FormEducation sectionEducation={sectionEducation} />
+                  <FormEducation sectionEducation={sectionEducation} handleOnchage={handleOnchage} />
                 </CardDashboard>
                 <CardDashboard text='Habilidades' plus handleplus={setsectionEducation} state={sectionEducation}>
                   <Row className='d-flex'>
+                    <Form id='habilidades'>
 
-                    <Col>
                       <Form.Group controlId='NameHabilidad'>
                         <Form.Label>Name habilidad</Form.Label>
-                        <Form.Control placeholder='name habilidad' type='text' />
+                        <Form.Control onChange={(e) => handleOnchage(e)} placeholder='name habilidad' type='text' />
                       </Form.Group>
-                    </Col>
-                    <Col className='d-flex align-items-center'>
 
-                      <Form.Group className='w-100' controlId='formBasicRange'>
+                      <Form.Group className='w-100' controlId='Rangehabilidad'>
                         <Form.Label>% De la habilidad</Form.Label>
-                        <Form.Control type='range' />
+                        <Form.Control onChange={(e) => handleOnchage(e)} type='range' />
                       </Form.Group>
-                    </Col>
-                  </Row>
 
-                  {/* - cargo
-- empresa
-- fecha inicio
-- fecha final
-- descripcion */}
+                    </Form>
+                  </Row>
 
                 </CardDashboard>
+
                 <CardDashboard text='Experience'>
-                  <Form.Group controlId='cargo'>
-                    <Form.Label>Cargo</Form.Label>
-                    <Form.Control placeholder='cargo' type='text' />
-                  </Form.Group>
-                  <Form.Group controlId='mpresa'>
-                    <Form.Label>Empresa</Form.Label>
-                    <Form.Control placeholder='Empresa' type='text' />
-                  </Form.Group>
+                  <Form id='experience'>
 
-                  <Row className='d-flex'>
-                    <Col>
-                      <Form.Group controlId='AñoInicial'>
-                        <Form.Label>Año de inicio</Form.Label>
-                        <Form.Control placeholder='año de inicio' type='number' />
-                      </Form.Group>
-                    </Col>
-                    <Col>
-                      <Form.Group controlId='AñoFinal'>
-                        <Form.Label>Año Finalizacion</Form.Label>
-                        <Form.Control placeholder='Año finalizacion' type='number' />
-                      </Form.Group>
-                    </Col>
+                    <Form.Group controlId='cargo'>
+                      <Form.Label>Cargo</Form.Label>
+                      <Form.Control onChange={(e) => handleOnchage(e)} placeholder='cargo' type='text' />
+                    </Form.Group>
+                    <Form.Group controlId='mpresa'>
+                      <Form.Label>Empresa</Form.Label>
+                      <Form.Control onChange={(e) => handleOnchage(e)} placeholder='Empresa' type='text' />
+                    </Form.Group>
 
-                  </Row>
-                  <Form.Group controlId='descrption'>
-                    <Form.Label>About work</Form.Label>
-                    <Form.Control placeholder='About work' as='textarea' rows={4} />
-                  </Form.Group>
+                    <Row className='d-flex'>
+                      <Col>
+                        <Form.Group controlId='AñoInicial'>
+                          <Form.Label>Año de inicio</Form.Label>
+                          <Form.Control onChange={(e) => handleOnchage(e)} placeholder='año de inicio' type='number' />
+                        </Form.Group>
+                      </Col>
+                      <Col>
+                        <Form.Group controlId='AñoFinal'>
+                          <Form.Label>Año Finalizacion</Form.Label>
+                          <Form.Control onChange={(e) => handleOnchage(e)} placeholder='Año finalizacion' type='number' />
+                        </Form.Group>
+                      </Col>
+
+                    </Row>
+                    <Form.Group controlId='descrption'>
+                      <Form.Label>About work</Form.Label>
+                      <Form.Control onChange={(e) => handleOnchage(e)} placeholder='About work' as='textarea' rows={4} />
+                    </Form.Group>
+                  </Form>
                 </CardDashboard>
                 <CardDashboard>
                   <p>Guarda tus datos. (Tus datos se guardan automaticamente cada 30 segundos)</p>
-                  <Button block>Save</Button>
+                  <Button block onClick={(e) => handleSubmit(e)}>Save</Button>
 
                 </CardDashboard>
               </Container>
