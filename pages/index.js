@@ -7,6 +7,7 @@ import firebase from 'firebase/app'
 import Layout from '../components/layout/layout'
 import { Button, Col, Row, Container, Form } from 'react-bootstrap'
 import useFildInput from '../hooks/useFildInut'
+import AlertMessage from '../components/alert/alert'
 
 const FormEducation = ({ sectionEducation, handleOnchage }) => {
   // console.log({ sectionEducation })
@@ -79,6 +80,7 @@ const Home = () => {
   const { fields, handleOnchage } = useFildInput()
   const [user, setUser] = useState(false)
   const [sectionEducation, setsectionEducation] = useState(['1'])
+  const [message, setMessage] = useState({ show: false, message: '', type: '' })
   // console.log({ fields })
 
   useEffect(() => {
@@ -96,10 +98,18 @@ const Home = () => {
 
     const uid = firebase.auth().currentUser.uid
     console.log(uid)
+    setMessage({ show: true, message: 'todo salio bien gracias', type: 'success' })
     firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid)
       .set({
         data: fields
       }, { merge: true })
+      .then(data => {
+        setMessage({ show: true, message: 'todo salio bien gracias', type: 'success' })
+      })
+      .catch((err) => {
+        console.log(err.code)
+        setMessage({ show: true, message: err.message, type: 'error' })
+      })
   }
 
   return (
@@ -110,6 +120,10 @@ const Home = () => {
           <link rel='icon' href='/favicon.ico' />
         </Head>
         <main>
+          {
+            message.show ? <AlertMessage setMessage={setMessage} message={message.message} type={message.type} /> : null
+          }
+
           <Row className='bg-light'>
             <Col lg='2' className='vh-100' />
             <Col lg='10'>
